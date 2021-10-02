@@ -5,8 +5,11 @@ import org.junit.jupiter.api.Test;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class DividaTest {
 
@@ -20,7 +23,7 @@ public class DividaTest {
     @Test
     public void naoDeveriaAceitarValorDaDividaMenorQue100Reais() {
         try {
-            divida.setValor(new BigDecimal(99));
+            divida.iniciarValor(new BigDecimal(99));
             fail("Deveria ter dado excecao");
         }
         catch (IllegalArgumentException e) {
@@ -31,7 +34,7 @@ public class DividaTest {
     @Test
     public void naoDeveriaAceitarValorDaDividaIguaA100Reais() {
         try {
-            divida.setValor(new BigDecimal(100));
+            divida.iniciarValor(new BigDecimal(100));
             fail("Deveria ter dado excecao");
         }
         catch (IllegalArgumentException e) {
@@ -44,7 +47,7 @@ public class DividaTest {
         BigDecimal valorDivida = new BigDecimal(101);
 
         try {
-            divida.setValor(valorDivida);
+            divida.iniciarValor(valorDivida);
             assertEquals(valorDivida, divida.getValor());
         }
         catch (IllegalArgumentException e) {
@@ -57,7 +60,7 @@ public class DividaTest {
         LocalDate hoje = LocalDate.now();
 
         try {
-            divida.setDataLimite(hoje);
+            divida.iniciarDataLimite(hoje);
             fail("Deveria ter dado excecao");
         }
         catch (IllegalArgumentException e) {
@@ -70,7 +73,7 @@ public class DividaTest {
         LocalDate umAnoEUmDiaAPartirDeHoje = LocalDate.now().plusYears(1).plusDays(1);
 
         try {
-            divida.setDataLimite(umAnoEUmDiaAPartirDeHoje);
+            divida.iniciarDataLimite(umAnoEUmDiaAPartirDeHoje);
             fail("Deveria ter dado excecao");
         }
         catch (IllegalArgumentException e) {
@@ -83,7 +86,7 @@ public class DividaTest {
         LocalDate amanha = LocalDate.now().plusDays(1);
 
         try {
-            divida.setDataLimite(amanha);
+            divida.iniciarDataLimite(amanha);
             assertEquals(amanha, divida.getDataLimite());
         }
         catch (IllegalArgumentException e) {
@@ -96,7 +99,7 @@ public class DividaTest {
         LocalDate umAnoAPartirDeHoje = LocalDate.now().plusYears(1);
 
         try {
-            divida.setDataLimite(umAnoAPartirDeHoje);
+            divida.iniciarDataLimite(umAnoAPartirDeHoje);
             assertEquals(umAnoAPartirDeHoje, divida.getDataLimite());
         }
         catch (IllegalArgumentException e) {
@@ -105,8 +108,37 @@ public class DividaTest {
     }
 
     @Test
+    public void naoDeveriaAceitarDividaSemDevedores() {
+        try {
+            divida.iniciarDevedores(new ArrayList<>());
+            fail("Deveria ter dado excecao");
+        }
+        catch (IllegalArgumentException e) {
+            assertEquals("A divida precisa ter um devedor", e.getMessage());
+        }
+    }
+
+    @Test
+    public void deveriaAceitarDividaComUmDevedor() {
+        List<Devedor> devedores = new ArrayList<>();
+        devedores.add(new Devedor());
+
+        try {
+            divida.iniciarDevedores(devedores);
+            assertEquals(devedores, divida.getDevedores());
+        }
+        catch (IllegalArgumentException e) {
+            fail("Nao deveria ter dado excecao");
+        }
+    }
+    @Test
     public void deveriaTerStatusNaoPagaAoInicializarDivida() {
-        this.divida = new Divida();
+        BigDecimal valorDivida = new BigDecimal(101);
+        LocalDate dataLimite = LocalDate.now().plusDays(1);
+        List<Devedor> devedores = new ArrayList<>();
+        devedores.add(new Devedor());
+
+        this.divida = new Divida(valorDivida, dataLimite, devedores);
         assertEquals(StatusDivida.NAO_PAGA, divida.getStatus());
     }
 

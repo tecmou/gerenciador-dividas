@@ -1,19 +1,14 @@
 package br.com.andrealoisio.divida.model;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Table(name = "devedores")
 public class Devedor {
 
-    @Id
     private String cpf;
     private String nome;
     private String email;
     private String celular;
-    @ManyToMany(mappedBy = "devedores", fetch = FetchType.LAZY)
     private List<Divida> dividas;
 
     public Devedor() {

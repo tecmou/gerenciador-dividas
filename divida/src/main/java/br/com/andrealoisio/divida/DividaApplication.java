@@ -9,5 +9,4 @@ public class DividaApplication {
 	public static void main(String[] args) {
 		SpringApplication.run(DividaApplication.class, args);
 	}
-
 }

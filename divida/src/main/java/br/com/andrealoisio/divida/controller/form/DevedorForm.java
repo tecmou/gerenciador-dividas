@@ -1,16 +1,13 @@
 package br.com.andrealoisio.divida.controller.form;
 
-import br.com.andrealoisio.divida.controller.dto.DevedorDto;
 import br.com.andrealoisio.divida.model.Devedor;
-import br.com.andrealoisio.divida.model.Divida;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.br.CPF;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import java.util.List;
-import java.util.stream.Collectors;
+import javax.validation.constraints.Pattern;
 
 public class DevedorForm {
 
@@ -20,6 +17,7 @@ public class DevedorForm {
     private String nome;
     @NotNull @NotEmpty @Email
     private String email;
+    @NotNull @NotEmpty @Pattern(regexp = "\\([1-9]\\d\\)\\s[5-9]\\d{4}\\-\\d{4}", message = "Celular deve ser valido e estar no formato (xx) xxxxx-xxxx")
     private String celular;
 
     public String getCpf() {
@@ -61,16 +59,5 @@ public class DevedorForm {
         devedor.setEmail(this.email);
         devedor.setCelular(this.celular);
         return devedor;
-    }
-
-    public static List<Devedor> convert(List<DevedorForm> devedores) {
-        return devedores.stream().map(d -> {
-            Devedor devedor = new Devedor();
-            devedor.setCpf(d.getCpf());
-            devedor.setNome(d.getNome());
-            devedor.setEmail(d.getEmail());
-            devedor.setCelular(d.getCelular());
-            return devedor;
-        }).collect(Collectors.toList());
     }
 }

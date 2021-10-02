@@ -1,4 +1,4 @@
-package br.com.andrealoisio.divida.config.validation;
+package br.com.andrealoisio.divida.config.validacao;
 
 public class ErroDeFormularioDto {
 	

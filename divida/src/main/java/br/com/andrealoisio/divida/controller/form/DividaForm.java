@@ -1,6 +1,5 @@
 package br.com.andrealoisio.divida.controller.form;
 
-import br.com.andrealoisio.divida.model.Devedor;
 import br.com.andrealoisio.divida.model.Divida;
 
 import javax.validation.Valid;
@@ -8,6 +7,7 @@ import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class DividaForm {
 
@@ -43,10 +43,7 @@ public class DividaForm {
     }
 
     public Divida convert() {
-        Divida divida = new Divida();
-        divida.setValor(this.valor);
-        divida.setDataLimite(this.dataLimite);
-        divida.setDevedores(DevedorForm.convert(this.devedores));
+        Divida divida = new Divida(this.valor, this.dataLimite, this.devedores.stream().map(d -> d.convert()).collect(Collectors.toList()));
         return divida;
     }
 }

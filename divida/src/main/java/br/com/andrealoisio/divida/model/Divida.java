@@ -1,37 +1,31 @@
 package br.com.andrealoisio.divida.model;
 
-import javax.persistence.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-@Entity
-@Table(name = "dividas")
 public class Divida {
 
-    @Id
-    @GeneratedValue
     private UUID uuid;
     private BigDecimal valor;
     private LocalDate dataLimite;
     private StatusDivida status;
-    @ManyToMany(fetch=FetchType.EAGER)
-    @JoinTable(name="dividas_devedores",
-            joinColumns=
-                @JoinColumn(name="fk_divida", referencedColumnName="uuid"),
-            inverseJoinColumns=
-                @JoinColumn(name="fk_devedor", referencedColumnName="cpf")
-    )
     private List<Devedor> devedores;
 
     public Divida() {
-        this.status = StatusDivida.NAO_PAGA;
         this.devedores = new ArrayList<>();
     }
 
-    public void setValor(BigDecimal valor) {
+    public Divida(BigDecimal valor, LocalDate dataLimite, List<Devedor> devedores) {
+        iniciarValor(valor);
+        iniciarDataLimite(dataLimite);
+        iniciarDevedores(devedores);
+        this.status = StatusDivida.NAO_PAGA;
+    }
+
+    protected void iniciarValor(BigDecimal valor) {
         if(!isValorMaiorQue100(valor)) {
             throw new IllegalArgumentException("Valor da divida deve ser maior que 100 reais");
         }
@@ -42,7 +36,7 @@ public class Divida {
         return new BigDecimal(100).compareTo(valor) < 0;
     }
 
-    public void setDataLimite(LocalDate dataLimite) {
+    protected void iniciarDataLimite(LocalDate dataLimite) {
         if(!isDataLimiteUmaDataFuturaQueNaoSuperaUmAno(dataLimite)) {
             throw new IllegalArgumentException("Data limite precisa ser uma data futura cujo prazo não supere 1 ano");
         }
@@ -56,31 +50,54 @@ public class Divida {
         return hoje.isBefore(dataLimite) && !umAnoAPartirDeHoje.isBefore(dataLimite);
     }
 
-    public void pagar() {
-        this.status = StatusDivida.PAGA;
+    protected void iniciarDevedores(List<Devedor> devedores) {
+        if(devedores.isEmpty()) {
+            throw new IllegalArgumentException("A divida precisa ter um devedor");
+        }
+        this.devedores = devedores;
     }
 
-    public void setDevedores(List<Devedor> devedores) {
-        this.devedores = devedores;
+    public void pagar() {
+        this.status = StatusDivida.PAGA;
     }
 
     public UUID getUuid() {
         return uuid;
     }
 
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
+    }
+
     public BigDecimal getValor() {
         return valor;
+    }
+
+    public void setValor(BigDecimal valor) {
+        this.valor = valor;
     }
 
     public LocalDate getDataLimite() {
         return dataLimite;
     }
 
+    public void setDataLimite(LocalDate dataLimite) {
+        this.dataLimite = dataLimite;
+    }
+
     public StatusDivida getStatus() {
         return status;
     }
 
+    public void setStatus(StatusDivida status) {
+        this.status = status;
+    }
+
     public List<Devedor> getDevedores() {
         return devedores;
+    }
+
+    public void setDevedores(List<Devedor> devedores) {
+        this.devedores = devedores;
     }
 }
