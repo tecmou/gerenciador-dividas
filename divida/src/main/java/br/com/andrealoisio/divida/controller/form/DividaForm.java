@@ -1,6 +1,7 @@
 package br.com.andrealoisio.divida.controller.form;
 
 import br.com.andrealoisio.divida.model.Divida;
+import br.com.andrealoisio.divida.model.DividaInvalidaException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -42,7 +43,7 @@ public class DividaForm {
         this.devedores = devedores;
     }
 
-    public Divida convert() {
+    public Divida convert() throws DividaInvalidaException {
         Divida divida = new Divida(this.valor, this.dataLimite, this.devedores.stream().map(d -> d.convert()).collect(Collectors.toList()));
         return divida;
     }

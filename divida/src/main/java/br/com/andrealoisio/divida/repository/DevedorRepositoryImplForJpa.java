@@ -6,7 +6,6 @@ import br.com.andrealoisio.divida.utils.PojoConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DevedorRepositoryImplForJpa implements DevedorRepository {
 
@@ -18,8 +17,8 @@ public class DevedorRepositoryImplForJpa implements DevedorRepository {
 
     @Override
     public List<Devedor> saveAll(List<Devedor> devedores) {
-        List<DevedorEntity> devedoresEntity = devedores.stream().map(d -> converter.convert(d, DevedorEntity.class)).collect(Collectors.toList());
+        List<DevedorEntity> devedoresEntity = converter.convert(devedores, DevedorEntity.class);
         devedoresEntity = jpaDevedorRepository.saveAll(devedoresEntity);
-        return devedoresEntity.stream().map(d -> converter.convert(d, Devedor.class)).collect(Collectors.toList());
+        return converter.convert(devedoresEntity, Devedor.class);
     }
 }

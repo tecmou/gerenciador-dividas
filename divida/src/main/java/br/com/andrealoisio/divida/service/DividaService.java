@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -22,8 +23,12 @@ public class DividaService {
         return dividaRepository.findAll();
     }
 
-    public List<Divida> listByCpf(String cpf) {
-        return dividaRepository.findByDevedores_cpf(cpf);
+    public List<Divida> listByCpf(String cpf) throws DividaNotFoundException {
+        List<Divida> dividas = dividaRepository.findByDevedores_cpf(cpf);
+        if (dividas.isEmpty()) {
+            throw new DividaNotFoundException("exception.divida.notfound");
+        }
+        return dividas;
     }
 
     public Divida save(Divida divida) {
@@ -31,12 +36,20 @@ public class DividaService {
         return dividaRepository.save(divida);
     }
 
-    public void remove(UUID uuid) {
+    public void remove(UUID uuid) throws DividaNotFoundException {
+        Optional<Divida> optionalDivida = dividaRepository.findById(uuid);
+        if(optionalDivida.isEmpty()) {
+            throw new DividaNotFoundException("exception.divida.notfound");
+        }
         dividaRepository.deleteById(uuid);
     }
 
-    public Divida pagar(UUID uuid) {
-        Divida divida = dividaRepository.findById(uuid);
+    public Divida pagar(UUID uuid) throws DividaNotFoundException {
+        Optional<Divida> optionalDivida = dividaRepository.findById(uuid);
+        if(optionalDivida.isEmpty()) {
+            throw new DividaNotFoundException("exception.divida.notfound");
+        }
+        Divida divida = optionalDivida.get();
         divida.pagar();
         return dividaRepository.save(divida);
     }

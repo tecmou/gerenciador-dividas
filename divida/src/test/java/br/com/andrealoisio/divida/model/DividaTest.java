@@ -1,5 +1,6 @@
 package br.com.andrealoisio.divida.model;
 
+import br.com.andrealoisio.divida.config.Messages;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,8 +27,8 @@ public class DividaTest {
             divida.iniciarValor(new BigDecimal(99));
             fail("Deveria ter dado excecao");
         }
-        catch (IllegalArgumentException e) {
-            assertEquals("Valor da divida deve ser maior que 100 reais", e.getMessage());
+        catch (DividaInvalidaException e) {
+            assertEquals(Messages.getMessageForLocale("exception.divida.valor_invalido"), e.getLocalizedMessage());
         }
     }
 
@@ -37,8 +38,8 @@ public class DividaTest {
             divida.iniciarValor(new BigDecimal(100));
             fail("Deveria ter dado excecao");
         }
-        catch (IllegalArgumentException e) {
-            assertEquals("Valor da divida deve ser maior que 100 reais", e.getMessage());
+        catch (DividaInvalidaException e) {
+            assertEquals(Messages.getMessageForLocale("exception.divida.valor_invalido"), e.getLocalizedMessage());
         }
     }
 
@@ -50,7 +51,7 @@ public class DividaTest {
             divida.iniciarValor(valorDivida);
             assertEquals(valorDivida, divida.getValor());
         }
-        catch (IllegalArgumentException e) {
+        catch (DividaInvalidaException e) {
             fail("Nao deveria ter dado excecao");
         }
     }
@@ -63,8 +64,8 @@ public class DividaTest {
             divida.iniciarDataLimite(hoje);
             fail("Deveria ter dado excecao");
         }
-        catch (IllegalArgumentException e) {
-            assertEquals("Data limite precisa ser uma data futura cujo prazo não supere 1 ano", e.getMessage());
+        catch (DividaInvalidaException e) {
+            assertEquals(Messages.getMessageForLocale("exception.divida.data_invalida"), e.getLocalizedMessage());
         }
     }
 
@@ -76,8 +77,8 @@ public class DividaTest {
             divida.iniciarDataLimite(umAnoEUmDiaAPartirDeHoje);
             fail("Deveria ter dado excecao");
         }
-        catch (IllegalArgumentException e) {
-            assertEquals("Data limite precisa ser uma data futura cujo prazo não supere 1 ano", e.getMessage());
+        catch (DividaInvalidaException e) {
+            assertEquals(Messages.getMessageForLocale("exception.divida.data_invalida"), e.getLocalizedMessage());
         }
     }
 
@@ -89,7 +90,7 @@ public class DividaTest {
             divida.iniciarDataLimite(amanha);
             assertEquals(amanha, divida.getDataLimite());
         }
-        catch (IllegalArgumentException e) {
+        catch (DividaInvalidaException e) {
             fail("Nao deveria ter dado excecao");
         }
     }
@@ -102,7 +103,7 @@ public class DividaTest {
             divida.iniciarDataLimite(umAnoAPartirDeHoje);
             assertEquals(umAnoAPartirDeHoje, divida.getDataLimite());
         }
-        catch (IllegalArgumentException e) {
+        catch (DividaInvalidaException e) {
             fail("Nao deveria ter dado excecao");
         }
     }
@@ -113,8 +114,8 @@ public class DividaTest {
             divida.iniciarDevedores(new ArrayList<>());
             fail("Deveria ter dado excecao");
         }
-        catch (IllegalArgumentException e) {
-            assertEquals("A divida precisa ter um devedor", e.getMessage());
+        catch (DividaInvalidaException e) {
+            assertEquals(Messages.getMessageForLocale("exception.divida.devedor_vazio"), e.getLocalizedMessage());
         }
     }
 
@@ -127,7 +128,7 @@ public class DividaTest {
             divida.iniciarDevedores(devedores);
             assertEquals(devedores, divida.getDevedores());
         }
-        catch (IllegalArgumentException e) {
+        catch (DividaInvalidaException e) {
             fail("Nao deveria ter dado excecao");
         }
     }
@@ -138,8 +139,13 @@ public class DividaTest {
         List<Devedor> devedores = new ArrayList<>();
         devedores.add(new Devedor());
 
-        this.divida = new Divida(valorDivida, dataLimite, devedores);
-        assertEquals(StatusDivida.NAO_PAGA, divida.getStatus());
+        try {
+            this.divida = new Divida(valorDivida, dataLimite, devedores);
+            assertEquals(StatusDivida.NAO_PAGA, divida.getStatus());
+        }
+        catch (DividaInvalidaException e) {
+            fail("Nao deveria ter dado excecao");
+        }
     }
 
     @Test

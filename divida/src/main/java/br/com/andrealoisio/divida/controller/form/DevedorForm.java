@@ -17,7 +17,7 @@ public class DevedorForm {
     private String nome;
     @NotNull @NotEmpty @Email
     private String email;
-    @NotNull @NotEmpty @Pattern(regexp = "\\([1-9]\\d\\)\\s[5-9]\\d{4}\\-\\d{4}", message = "Celular deve ser valido e estar no formato (xx) xxxxx-xxxx")
+    @NotNull @NotEmpty @Pattern(regexp = "\\([1-9]\\d\\)\\s[5-9]\\d{4}\\-\\d{4}", message = "{validacao.devedor.celular_invalido}")
     private String celular;
 
     public String getCpf() {

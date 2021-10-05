@@ -18,16 +18,16 @@ public class Divida {
         this.devedores = new ArrayList<>();
     }
 
-    public Divida(BigDecimal valor, LocalDate dataLimite, List<Devedor> devedores) {
+    public Divida(BigDecimal valor, LocalDate dataLimite, List<Devedor> devedores) throws DividaInvalidaException {
         iniciarValor(valor);
         iniciarDataLimite(dataLimite);
         iniciarDevedores(devedores);
         this.status = StatusDivida.NAO_PAGA;
     }
 
-    protected void iniciarValor(BigDecimal valor) {
+    protected void iniciarValor(BigDecimal valor) throws DividaInvalidaException {
         if(!isValorMaiorQue100(valor)) {
-            throw new IllegalArgumentException("Valor da divida deve ser maior que 100 reais");
+            throw new DividaInvalidaException("exception.divida.valor_invalido");
         }
         this.valor = valor;
     }
@@ -36,9 +36,9 @@ public class Divida {
         return new BigDecimal(100).compareTo(valor) < 0;
     }
 
-    protected void iniciarDataLimite(LocalDate dataLimite) {
+    protected void iniciarDataLimite(LocalDate dataLimite) throws DividaInvalidaException {
         if(!isDataLimiteUmaDataFuturaQueNaoSuperaUmAno(dataLimite)) {
-            throw new IllegalArgumentException("Data limite precisa ser uma data futura cujo prazo não supere 1 ano");
+            throw new DividaInvalidaException("exception.divida.data_invalida");
         }
         this.dataLimite = dataLimite;
     }
@@ -50,9 +50,9 @@ public class Divida {
         return hoje.isBefore(dataLimite) && !umAnoAPartirDeHoje.isBefore(dataLimite);
     }
 
-    protected void iniciarDevedores(List<Devedor> devedores) {
+    protected void iniciarDevedores(List<Devedor> devedores) throws DividaInvalidaException {
         if(devedores.isEmpty()) {
-            throw new IllegalArgumentException("A divida precisa ter um devedor");
+            throw new DividaInvalidaException("exception.divida.devedor_vazio");
         }
         this.devedores = devedores;
     }

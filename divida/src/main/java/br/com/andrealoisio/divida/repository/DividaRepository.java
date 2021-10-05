@@ -3,6 +3,7 @@ package br.com.andrealoisio.divida.repository;
 import br.com.andrealoisio.divida.model.Divida;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface DividaRepository {
@@ -14,5 +15,5 @@ public interface DividaRepository {
 
     void deleteById(UUID uuid);
 
-    Divida findById(UUID uuid);
+    Optional<Divida> findById(UUID uuid);
 }
